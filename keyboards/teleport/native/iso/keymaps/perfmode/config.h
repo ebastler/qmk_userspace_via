@@ -23,4 +23,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WEAR_LEVELING_LOGICAL_SIZE 4096
 
 /* Increase debounce, as asym eager seems to lead to chatter with the fast polling rate in some cases */
-#define DEBOUNCE 9
+#define DEBOUNCE 11
