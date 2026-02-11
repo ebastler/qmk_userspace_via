@@ -15,17 +15,91 @@
  */
 #include QMK_KEYBOARD_H
 
+// tested and working
+void matrix_io_delay(void) { __asm__ volatile("nop\nnop\nnop\n"); }
+
 enum layers{
     BASE,
     GAME,
     _FN1
 };
 
+/* Create a keycode to toggle RGB without writing to eeprom, important to enable/disable the non-eeprom-stored custom lighting on PERF layer */
+enum my_keycodes {
+  RM_TOGG_NO = SAFE_RANGE,
+  RGB_M_2,
+  RGB_M_3,
+  RGB_M_4,
+  RGB_M_5,
+  RGB_M_6,
+  RGB_M_7,
+  RGB_M_8,
+  RGB_M_9,
+  RGB_M_0
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case RM_TOGG_NO:
+      if (record->event.pressed) {
+        rgb_matrix_toggle_noeeprom();
+      }
+      return false;
+    case RGB_M_2:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_ALPHAS_MODS);
+      }
+      return false;
+    case RGB_M_3:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_BREATHING);
+      }
+      return false;
+    case RGB_M_4:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_CYCLE_UP_DOWN);
+      }
+      return false;
+    case RGB_M_5:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
+      }
+      return false;
+    case RGB_M_6:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_CYCLE_SPIRAL);
+      }
+      return false;
+    case RGB_M_7:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
+      }
+      return false;
+    case RGB_M_8:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_SOLID_REACTIVE);
+      }
+      return false;
+    case RGB_M_9:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE);
+      }
+      return false;
+    case RGB_M_0:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_CUSTOM_SINGLE_COLOR_RAINDROPS);
+      }
+      return false;
+    default:
+      return true; // Process all other keycodes normally
+  }
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [BASE] = LAYOUT(    /* keymap for layer 0 */
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_PSCR,     KC_DEL,      KC_HOME, KC_END,  KC_SCRL, KC_PAUSE,
-        KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,     KC_DEL,      KC_LNUM, KC_PSLS, KC_PAST, KC_PMNS,
+        KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,     KC_DEL,      KC_NUM, KC_PSLS, KC_PAST, KC_PMNS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_ENT,      KC_PGUP,     KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
         KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS,              KC_PGDN,     KC_P4,   KC_P5,   KC_P6,
         KC_LSFT, KC_NUBS, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,              KC_UP,       KC_P1,   KC_P2,   KC_P3,   KC_PENT,
@@ -33,17 +107,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [GAME] = LAYOUT(    /* keymap for layer 1 - GAME disables WIN key and has RGB layer indicators */
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     RM_TOGG,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-        KC_TRNS, KC_NO,   KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS, KC_TRNS
+        KC_TRNS, KC_NO,   KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_NO,   KC_TRNS, KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS, KC_TRNS
     ),
 
     [_FN1] = LAYOUT(    /* keymap for layer 2 */
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RM_TOGG, RM_VALD, RM_VALU, KC_MPRV, KC_MPLY, KC_MNXT, KC_VOLD, KC_VOLU, KC_MUTE, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, RGB_M_2, RGB_M_3, RGB_M_4, RGB_M_5, RGB_M_6, RGB_M_7, RGB_M_8, RGB_M_9, RGB_M_0, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         RM_TOGG, RM_VALU, RM_HUEU, RM_SATU, RM_SPDU, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     RM_PREV,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, RM_VALD, RM_HUED, RM_SATD, RM_SPDD, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              RM_NEXT,     KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, NK_TOGG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
