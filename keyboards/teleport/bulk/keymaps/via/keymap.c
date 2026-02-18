@@ -27,6 +27,7 @@ enum layers{
 /* Create a keycode to toggle RGB without writing to eeprom, important to enable/disable the non-eeprom-stored custom lighting on PERF layer */
 enum my_keycodes {
   RM_TOGG_NO = SAFE_RANGE,
+  RGB_M_1,
   RGB_M_2,
   RGB_M_3,
   RGB_M_4,
@@ -43,6 +44,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case RM_TOGG_NO:
       if (record->event.pressed) {
         rgb_matrix_toggle_noeeprom();
+      }
+      return false;
+    case RGB_M_1:
+      if (record->event.pressed) {
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
       }
       return false;
     case RGB_M_2:
@@ -117,7 +123,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_FN1] = LAYOUT(    /* keymap for layer 2 */
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RM_TOGG, RM_VALD, RM_VALU, KC_MPRV, KC_MPLY, KC_MNXT, KC_VOLD, KC_VOLU, KC_MUTE, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-        KC_TRNS, KC_TRNS, RGB_M_2, RGB_M_3, RGB_M_4, RGB_M_5, RGB_M_6, RGB_M_7, RGB_M_8, RGB_M_9, RGB_M_0, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, RGB_M_1, RGB_M_2, RGB_M_3, RGB_M_4, RGB_M_5, RGB_M_6, RGB_M_7, RGB_M_8, RGB_M_9, RGB_M_0, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         RM_TOGG, RM_VALU, RM_HUEU, RM_SATU, RM_SPDU, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     RM_PREV,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, RM_VALD, RM_HUED, RM_SATD, RM_SPDD, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              RM_NEXT,     KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, NK_TOGG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,              KC_TRNS,     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
